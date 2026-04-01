@@ -1,29 +1,25 @@
 services:
-  # Banco de Dados (Sua camada Silver/Gold vai morar aqui)
+  spark:
+    image: apache/spark:3.5.1
+    container_name: spark
+    volumes:
+      - ./:/opt/project
+    working_dir: /opt/project
+    command: tail -f /dev/null
+    environment:
+    - PATH=/opt/spark/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
   postgres:
-    image: postgres:15
-    container_name: postgres_db
+    image: postgres:15-alpine
+    container_name: postgres
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: minhasenha
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: data_platform
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
-  # Spark Master (Onde o seu script vai rodar)
-  spark:
-    image: bitnami/spark:3.5
-    container_name: spark_master
-    user: root
-    environment:
-      - SPARK_MODE=master
-    volumes:
-      - .:/opt/project  # Mapeia seu código atual para dentro do Linux do container
-    ports:
-      - "8080:8080" # Interface do Spark
-      - "4040:4040" # Interface do Job em execução
 
 volumes:
   postgres_data:
