@@ -1,13 +1,23 @@
 services:
   spark:
+    # Define a imagem oficial. Versão mais estável e compatível com Java 11.
     image: apache/spark:3.5.1
+    # Nome do container.
     container_name: spark
+    # O "túnel" entre Windows e o Linux do Docker.
     volumes:
       - ./:/opt/project
+    # Em vez de começar na raiz (/), ele já cai direto na sua pasta de código.
     working_dir: /opt/project
+    # Por padrão, o Spark da Apache desliga se não tiver tarefa.
+    # O 'tail -f /dev/null' força o container a ficar lendo um arquivo infinito (vazio),
+    # mantendo o container "Up" para você rodar seus scripts quando quiser.
     command: tail -f /dev/null
+    # Variáveis de Ambiente.
     environment:
-    - PATH=/opt/spark/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      # Adiciona os binários do Spark (/opt/spark/bin) no "atalho" do sistema.
+      # Isso permite que você digite apenas 'spark-submit' em vez do caminho completo.
+      - PATH=/opt/spark/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
   postgres:
     image: postgres:15-alpine
