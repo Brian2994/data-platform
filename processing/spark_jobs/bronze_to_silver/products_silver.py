@@ -11,7 +11,7 @@ def main():
     spark = SparkSession.builder \
         .appName('ProductsSilver') \
         .master("local[*]") \
-        .config("spark.jars.packages", "org.postgresql:postgresql:42.7.3") \
+        .config("spark.jars", "/opt/project/jars/postgresql-42.7.3.jar") \
         .getOrCreate()
 
     # 🔹 Verifica se existe dado
