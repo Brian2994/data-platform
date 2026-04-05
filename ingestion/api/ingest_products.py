@@ -3,8 +3,8 @@ import os
 from datetime import datetime
 from client import fetch_data
 
-BASE_PATH = os.getenv("BASE_PATH", "data")
-RAW_PATH = os.path.join(BASE_PATH, "bronze", "products")
+BASE_PATH = os.getenv('BASE_PATH', 'data')
+RAW_PATH = os.path.join(BASE_PATH, 'bronze', 'products')
 
 def ingest():
     data = fetch_data('products')
