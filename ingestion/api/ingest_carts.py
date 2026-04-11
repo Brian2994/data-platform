@@ -3,8 +3,8 @@ import os
 from datetime import datetime
 from client import fetch_data
 
-BASE_PATH = os.getenv("BASE_PATH", "data")
-RAW_PATH = os.path.join(BASE_PATH, "bronze", "carts")
+BASE_PATH = os.getenv('BASE_PATH', 'data')
+RAW_PATH = os.path.join(BASE_PATH, 'bronze', 'carts')
 
 def ingest():
     data = fetch_data('carts')
@@ -17,9 +17,9 @@ def ingest():
 
     # 🔥 Padronização de colunas
     df = df.rename(columns={
-        "id": "cart_id",
-        "userId": "user_id",
-        "productId": "product_id"
+        'id': 'cart_id',
+        'userId': 'user_id',
+        'productId': 'product_id'
     })
 
     df['ingestion_date'] = datetime.utcnow()
