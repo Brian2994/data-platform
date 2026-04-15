@@ -42,7 +42,9 @@ services:
       - airflow_db_data:/var/lib/postgresql/data
 
   airflow-webserver:
-    image: apache/airflow:2.8.1
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
     container_name: airflow-webserver
     depends_on:
       - airflow-db
@@ -50,14 +52,17 @@ services:
       AIRFLOW__CORE__EXECUTOR: SequentialExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
       AIRFLOW__CORE__FERNET_KEY: abc123
+      AIRFLOW__WEBSERVER__SECRET_KEY: minha_chave_super_secreta
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "8080:8080" # Mudei para 8085 para evitar conflito com outros apps
     command: >
       bash -c "
-      airflow db init &&
+      sleep 10 &&
+      airflow db migrate &&
       airflow users create \
         --username admin \
         --password admin \
@@ -69,16 +74,24 @@ services:
       "
 
   airflow-scheduler:
-    image: apache/airflow:2.8.1
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
     container_name: airflow-scheduler
     depends_on:
       - airflow-webserver # O scheduler agora espera o webserver criar o banco
     environment:
       AIRFLOW__CORE__EXECUTOR: SequentialExecutor
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
+      AIRFLOW__WEBSERVER__SECRET_KEY: minha_chave_super_secreta
     volumes:
       - ./airflow/dags:/opt/airflow/dags
-    command: airflow scheduler
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: >
+      bash -c "
+      sleep 15 &&
+      airflow scheduler
+      "
 
 volumes:
   postgres_data:
