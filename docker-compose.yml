@@ -62,7 +62,7 @@ services:
     command: >
       bash -c "
       sleep 10 &&
-      airflow db migrate &&
+      airflow db upgrade &&
       airflow users create \
         --username admin \
         --password admin \
