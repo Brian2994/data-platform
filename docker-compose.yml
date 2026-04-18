@@ -49,9 +49,11 @@ services:
     depends_on:
       - airflow-db
     environment:
-      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__PARALLELISM: 2
+      AIRFLOW__CORE__DAG_CONCURRENCY: 2
+      AIRFLOW__CORE__MAX_ACTIVATE_RUNS_PER_DAG: 2
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
-      AIRFLOW__CORE__FERNET_KEY: abc123
       AIRFLOW__WEBSERVER__SECRET_KEY: minha_chave_super_secreta
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
     volumes:
@@ -61,8 +63,7 @@ services:
       - "8080:8080" # Mudei para 8085 para evitar conflito com outros apps
     command: >
       bash -c "
-      sleep 10 &&
-      airflow db upgrade &&
+      airflow db init &&
       airflow users create \
         --username admin \
         --password admin \
@@ -81,7 +82,8 @@ services:
     depends_on:
       - airflow-webserver # O scheduler agora espera o webserver criar o banco
     environment:
-      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__PARALLELISM: 2
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-db:5432/airflow
       AIRFLOW__WEBSERVER__SECRET_KEY: minha_chave_super_secreta
     volumes:
