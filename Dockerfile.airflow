@@ -1,5 +1,5 @@
 # 1. Usar a versão 2.8.1 com Python 3.11 (mais estável e segura)
-FROM apache/airflow:2.8.1-python3.11
+FROM apache/airflow:2.8.1-python3.11-slim
 
 USER root
 # 2. Atualizar o Sistema Operacional para corrigir vulnerabilidades críticas
