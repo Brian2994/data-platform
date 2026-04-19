@@ -1,8 +1,19 @@
-FROM apache/airflow:2.8.1
+# 1. Usar a versão 2.8.1 com Python 3.11 (mais estável e segura)
+FROM apache/airflow:2.8.1-python3.11
+
+USER root
+# 2. Atualizar o Sistema Operacional para corrigir vulnerabilidades críticas
+# O 'apt-get upgrade' resolve muitos dos alertas que o Docker Desktop mostrou
+RUN apt-get update && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends \
+    build-essential \
+    && apt-get autoremove -yqq --purge \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 USER airflow
 
-# Instala dependências necessárias
-RUN pip install --no-cache-dir \
-    psycopg2-binary \
-    apache-airflow-providers-docker
+# 3. Copiar e instalar o seu arquivo de requisitos
+# É melhor usar o arquivo do que listar um por um no RUN para facilitar o commit
+COPY requirements.txt /requirements.txt
+RUN pip install --no-cache-dir -r /requirements.txt
