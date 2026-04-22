@@ -89,7 +89,7 @@ services:
     volumes:
       - ./airflow/dags:/opt/airflow/dags
       - /var/run/docker.sock:/var/run/docker.sock
-    command: scheduler
+    command: airflow scheduler
 
 volumes:
   postgres_data:
